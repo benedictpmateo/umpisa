@@ -36,16 +36,19 @@ const BaseResolver = {
   },
 };
 
+export const typeDefs = [BaseTypeDef, UserTypeDef, PokemonTypeDef];
+export const resolvers = {
+  Query: merge(BaseResolver.Query, UserResolver.Query, PokemonResolver.Query),
+  Mutation: merge(
+    BaseResolver.Mutation,
+    UserResolver.Mutation,
+    PokemonResolver.Mutation
+  ),
+}
+
 const schema = createSchema({
-  typeDefs: [BaseTypeDef, UserTypeDef, PokemonTypeDef],
-  resolvers: {
-    Query: merge(BaseResolver.Query, UserResolver.Query, PokemonResolver.Query),
-    Mutation: merge(
-      BaseResolver.Mutation,
-      UserResolver.Mutation,
-      PokemonResolver.Mutation
-    ),
-  },
+  typeDefs,
+  resolvers,
 });
 
 export default schema;

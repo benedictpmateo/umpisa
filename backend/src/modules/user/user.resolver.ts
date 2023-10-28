@@ -7,6 +7,7 @@ import type {
 } from "../../interface/base";
 import { GraphQLError } from "graphql";
 import { generateAccessToken } from "../../utils/jwt";
+import type { Context } from "../../app";
 
 const UserResolver = {
   Query: {
@@ -19,9 +20,8 @@ const UserResolver = {
     },
   },
   Mutation: {
-    loginAccount: async (_, args: { body: LoginAccountRequest }, context) => {
-      console.log(context);
-      const user = await UserModel.findOne({
+    loginAccount: async (_, args: { body: LoginAccountRequest }, context: Context) => {
+      const user = await context.models.UserModel.findOne({
         email: args.body.email.toLowerCase(),
       });
       if (!user) {
@@ -36,8 +36,8 @@ const UserResolver = {
         token,
       };
     },
-    createAccount: async (_, args: { body: CreateAccountRequest }) => {
-      const isExist = await UserModel.findOne({
+    createAccount: async (_, args: { body: CreateAccountRequest }, context: Context) => {
+      const isExist = await context.models.UserModel.findOne({
         email: args.body.email.toLowerCase(),
       });
       if (isExist) {

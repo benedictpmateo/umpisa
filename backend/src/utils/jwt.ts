@@ -6,11 +6,11 @@ export const generateAccessToken = (body: any) => {
   return jwt.sign(body, SECRET_KEY, { expiresIn: '30d' })
 }
 
-export const verifyToken = (jwtToken: string) => {
+export const verifyToken = (jwtToken: string): Promise<jwt.JwtPayload & { _id: string, email: string }> => {
   return new Promise((resolve, reject) => {
     try {
       const token = jwtToken.replace(/bearer /i, '')
-      jwt.verify(token, SECRET_KEY, (err, user) => {
+      jwt.verify(token, SECRET_KEY, (err, user: any) => {
         if (err) reject(err);
 
         resolve(user)
