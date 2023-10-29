@@ -1,9 +1,9 @@
-import { Homepage } from "./_components/Homepage";
+import Rankings from "@/components/modules/Rankings/Rankings";
 
-export default function Home() {
+export default function Page() {
   return (
     <div>
-      test
+      <Rankings />
     </div>
   );
 }

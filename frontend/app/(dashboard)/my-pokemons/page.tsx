@@ -1,9 +1,9 @@
-import { Homepage } from "./_components/Homepage";
+import MyPokemons from "@/components/modules/MyPokemons/MyPokemons";
 
-export default function Home() {
+export default function Page() {
   return (
     <div>
-      test
+      <MyPokemons />
     </div>
   );
 }

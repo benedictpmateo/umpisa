@@ -1,9 +1,9 @@
-import { Homepage } from "./_components/Homepage";
+import ProfilePage from "@/components/modules/Profile/Profile";
 
-export default function Home() {
+export default function Page() {
   return (
     <div>
-      test
+      <ProfilePage />
     </div>
   );
 }

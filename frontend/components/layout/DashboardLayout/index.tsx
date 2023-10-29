@@ -28,7 +28,7 @@ export const DashboardLayout = ({
                   className={cn(
                     "text-sm font-medium text-muted-foreground transition-colors hover:text-primary",
                     {
-                      "text-primary": path.includes(item.url),
+                      "text-primary": path == item.url,
                     }
                   )}
                 >

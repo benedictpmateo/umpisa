@@ -9,23 +9,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQueryUser } from "@/hooks/useQueryUser";
-import { generateAnAvatar } from "@/lib/avatar";
-import { signOut, useSession } from "next-auth/react";
+import { createPokemonAvatarUrl, generateAnAvatar } from "@/lib/avatar";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function ProfileDropdown() {
   const router = useRouter()
-  const { data } = useSession();
   const { user } = useQueryUser();
 
-  const id = generateAnAvatar(data?.user?.email || "");
+  const id = generateAnAvatar(user?.email || "");
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar className="bg-red-100">
           <AvatarImage
-            src={`/assets/pokedex/${String(id).padStart(3, "0")}MS.png`}
+            src={createPokemonAvatarUrl(id)}
           />
         </Avatar>
       </DropdownMenuTrigger>

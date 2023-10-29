@@ -1,4 +1,3 @@
-import { useAppContext } from "@/context/AppContext";
 import graphqlClient from "@/lib/graphql";
 import { useQuery } from "@tanstack/react-query";
 import { gql } from "graphql-request";

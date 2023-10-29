@@ -24,7 +24,7 @@ export const useQueryUser = () => {
   });
 
   return {
-    user: data?.user || [],
+    user: data?.user || null,
     loading: isLoading,
   };
 };

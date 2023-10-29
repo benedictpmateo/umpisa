@@ -1,9 +1,9 @@
-import { Homepage } from "./_components/Homepage";
+import { CatchPokemon } from "@/components/modules/CatchPokemon/CatchPokemon";
 
 export default function Home() {
   return (
     <div>
-      test
+      <CatchPokemon />
     </div>
   );
 }
