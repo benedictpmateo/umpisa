@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,7 @@ export const CatchPokemon = () => {
         );
       }
       client.invalidateQueries({ queryKey: ["my-pokemons"] });
+      client.invalidateQueries({ queryKey: ["rankings"] });
       generateNewPokemonAfterCatch();
     },
     onError(error) {

@@ -17,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import graphqlClient from "@/lib/graphql";
+import { gql } from "graphql-request";
 
 const formSchema = z.object({
   email: z.string().email().min(1, {
@@ -30,7 +32,6 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
-  const [isPending, setIsPending] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
 
@@ -42,28 +43,44 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsPending(true);
-    const { email, password } = values;
-    try {
-      const { ok, error, url } = await signIn("credentials", {
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["signup"],
+    mutationFn: async (body: z.infer<typeof formSchema>) =>
+      graphqlClient.request(
+        gql`
+          mutation LoginAccount($body: LoginAccountRequest!) {
+            loginAccount(body: $body) {
+              token
+            }
+          }
+        `,
+        {
+          body,
+        }
+      ),
+    async onSuccess(data: any, variables) {
+      const { ok, error, url } = (await signIn("credentials", {
         redirect: false,
-        email,
-        password,
-        callbackUrl: callbackUrl || '/'
-      }) as any;
+        token: data.loginAccount?.token,
+        callbackUrl: callbackUrl || "/",
+      })) as any;
 
       if (!ok && error === "CredentialsSignin") {
-        form.setError('email', { message: "" });
-        form.setError('password', { message: "Invalid credentials" });
+        form.setError("email", { message: "" });
+        form.setError("password", { message: "Invalid credentials" });
       }
-
       if (ok && url) router.push(url);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsPending(false)
-    }
+    },
+    onError(error: any) {
+      if (error?.response?.errors) {
+        form.setError("email", { message: "" });
+        form.setError("password", { message: "Invalid credentials" });
+      }
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    mutate(values);
   }
 
   return (
@@ -97,12 +114,13 @@ export default function LoginForm() {
           )}
         />
         <div className="flex items-center justify-between">
-
           <Button type="submit" disabled={isPending}>
             Submit
           </Button>
           <Link href="/signup">
-            <p className="text-blue-500 text-base font-semibold">Create your account</p>
+            <p className="text-blue-500 text-base font-semibold">
+              Create your account
+            </p>
           </Link>
         </div>
       </form>

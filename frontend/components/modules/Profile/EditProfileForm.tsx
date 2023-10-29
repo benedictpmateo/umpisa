@@ -76,8 +76,8 @@ export default function EditProfileForm() {
       client.invalidateQueries({ queryKey: ['user'] })
       client.invalidateQueries({ queryKey: ['rankings'] })
     },
-    onError(error) {
-      toast.error(error?.response.errors[0].message)
+    onError(error: any) {
+      toast.error(error?.response?.errors[0].message)
     }
   });
 

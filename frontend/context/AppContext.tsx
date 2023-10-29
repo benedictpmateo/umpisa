@@ -2,12 +2,11 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import update from "immutability-helper";
 import { PayloadAction } from "../utils/payload";
-import { STORAGE_KEY } from "@/utils/constant";
 
 export type AppContextAction = "app.update" | "app.reset";
 
 export interface AppContextState {
-  token?: string;
+  //
 }
 
 export interface AppContextType {
@@ -18,7 +17,7 @@ export interface AppContextType {
 }
 
 const initialState: AppContextState = {
-  token: ''
+  //
 };
 
 const reducer = (
@@ -69,16 +68,6 @@ export const AppContextProvider = ({
     initialState,
     (state) => state
   );
-
-  useEffect(() => {
-    const token = localStorage.getItem(STORAGE_KEY.TOKEN);
-    dispatchApp({
-      type: "app.update",
-      payload: {
-        token,
-      },
-    });
-  }, []);
 
   return (
     <AppContext.Provider value={{ app, dispatchApp }}>

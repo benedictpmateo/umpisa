@@ -72,7 +72,7 @@ export default function SignupForm() {
       ),
     onSuccess(data: any, variables) {
       toast.success('Successfully created account: ' + variables.email)
-      router.push('/')
+      router.push('/login')
     },
     onError(error: any) {
       if (error?.response?.errors) {

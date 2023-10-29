@@ -1,9 +1,7 @@
-import graphqlClient from "@/lib/graphql";
-import { gql } from "graphql-request";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -14,25 +12,13 @@ export const authOptions: AuthOptions = {
       async authorize(credentials: any, req) {
         if (req.method === "POST") {
           try {
-            const { loginAccount } = await graphqlClient.request<any>(
-              gql`
-                mutation LoginAccount($body: LoginAccountRequest!) {
-                  loginAccount(body: $body) {
-                    token
-                  }
-                }
-              `,
-              {
-                body: {
-                  email: credentials.email,
-                  password: credentials.password,
-                },
-              }
-            );
-            return {
-              ...credentials,
-              jwt: loginAccount?.token,
-            };
+            if (credentials.token) {
+              return {
+                ...credentials,
+                jwt: credentials?.token,
+              };
+            }
+            return null;
           } catch (error) {
             console.log(error);
             return null;
@@ -43,7 +29,7 @@ export const authOptions: AuthOptions = {
   ],
   pages: {
     signIn: "/login",
-    signOut: '/login'
+    signOut: "/login",
   },
   session: {
     strategy: "jwt",
@@ -69,10 +55,10 @@ export const authOptions: AuthOptions = {
       if (token) {
         return {
           ...session,
-          jwt: token.jwt
-        }
+          jwt: token.jwt,
+        };
       }
-      return session
+      return session;
     },
     jwt({ token, user, account }: any) {
       if (user && user?.jwt) {
@@ -82,7 +68,7 @@ export const authOptions: AuthOptions = {
         };
       }
       return token;
-    }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

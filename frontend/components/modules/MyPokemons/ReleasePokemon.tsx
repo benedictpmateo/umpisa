@@ -51,6 +51,7 @@ export const ReleasePokemon = ({
       }
       setOpen(false);
       client.invalidateQueries({ queryKey: ["my-pokemons"] });
+      client.invalidateQueries({ queryKey: ["rankings"] });
     },
     onError(error) {
       console.log(error);
