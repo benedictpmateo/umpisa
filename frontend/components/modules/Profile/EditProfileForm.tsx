@@ -82,7 +82,6 @@ export default function EditProfileForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(user._id)
     mutate(values);
   }
 

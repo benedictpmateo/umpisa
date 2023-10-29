@@ -16,6 +16,8 @@ export default function RankingItem({
 }) {
   const { user } = useQueryUser();
 
+  if (!user) return null;
+
   return (
     <div className={cn("flex border border-border rounded-sm p-4 justify-between", {
       'shadow-xl shadow-cyan-500/50' :ranking === 1,
