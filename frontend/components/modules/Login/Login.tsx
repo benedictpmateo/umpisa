@@ -14,12 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import graphqlClient from "@/lib/graphql";
-import { gql } from "graphql-request";
-import { useMutation } from "@tanstack/react-query";
-import { STORAGE_KEY } from "@/utils/constant";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email().min(1, {
@@ -32,6 +30,10 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,29 +42,28 @@ export default function LoginForm() {
     },
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: async (body: z.infer<typeof formSchema>) =>
-      graphqlClient.request(
-        gql`
-          mutation LoginAccount($body: LoginAccountRequest!) {
-            loginAccount(body: $body) {
-              token
-            }
-          }
-        `,
-        {
-          body,
-        }
-      ),
-    onSuccess(data: any) {
-      localStorage.setItem(STORAGE_KEY.TOKEN, data?.loginAccount?.token);
-      router.push("/");
-    },
-  });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsPending(true);
+    const { email, password } = values;
+    try {
+      const { ok, error, url } = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+        callbackUrl: callbackUrl || '/'
+      }) as any;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate(values);
+      if (!ok && error === "CredentialsSignin") {
+        form.setError('email', { message: "" });
+        form.setError('password', { message: "Invalid credentials" });
+      }
+
+      if (ok && url) router.push(url);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (

@@ -1,7 +1,8 @@
 'use client';
+import { SessionProvider } from "next-auth/react";
 import { ReactQueryProvider } from "./ReactQueryProvider";
 import { AppContextProvider } from "../context/AppContext";
-import { RouteGuard } from "./RouteGuard";
+import ComponentsProvider from "./ComponentsProvider";
 
 const BuilderContextProvider = (providers: any): any => {
   if (providers.length === 1) {
@@ -22,7 +23,8 @@ const BuilderContextProvider = (providers: any): any => {
 };
 
 export const BuilderTreeProvider = BuilderContextProvider([
+  SessionProvider,
   ReactQueryProvider,
-  RouteGuard,
   AppContextProvider,
+  ComponentsProvider,
 ]);

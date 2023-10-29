@@ -1,6 +1,6 @@
-import LoginForm from "./_components/Login";
+import LoginForm from "@/components/modules/Login/Login";
 
-export default function Home() {
+export default function Page() {
   return (
     <div className="w-full">
       <LoginForm />

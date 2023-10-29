@@ -2,13 +2,14 @@ import { useAppContext } from "@/context/AppContext";
 import graphqlClient from "@/lib/graphql";
 import { useQuery } from "@tanstack/react-query";
 import { gql } from "graphql-request";
+import { useSession } from "next-auth/react";
 
 export const useQueryPokemon = () => {
-  const { app } = useAppContext();
+  const { data: session } = useSession();
   const { data, isLoading } = useQuery<any>({
     queryKey: ["pokemons"],
     queryFn: () =>
-      graphqlClient.setHeader("Authorization", `Bearer ${app.token}`).request(
+      graphqlClient.setHeader("Authorization", `Bearer ${(session as any)?.jwt || ''}`).request(
         gql`
           query Pokemons {
             pokemons {
@@ -33,7 +34,7 @@ export const useQueryPokemon = () => {
           }
         `
       ),
-    enabled: !!app.token,
+    enabled: !!(session as any)?.jwt,
   });
 
   return {

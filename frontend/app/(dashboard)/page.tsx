@@ -1,6 +1,6 @@
-import { Homepage } from "./_homepage/Homepage";
+import { Homepage } from "./_components/Homepage";
 
-export default function Home() {
+export default function Page() {
   return <div>
     <Homepage />
   </div>;

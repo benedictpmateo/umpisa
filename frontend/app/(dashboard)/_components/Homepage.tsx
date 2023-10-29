@@ -7,8 +7,11 @@ import { gql } from "graphql-request";
 import { useEffect } from "react";
 import { CatchPokemon } from "./CatchPokemon";
 import { ReleasePokemon } from "./ReleasePokemon";
+import { useSession } from "next-auth/react";
 
 export const Homepage = () => {
+  const { data: session, update } = useSession()
+
   const { pokemons, total, loading } = useQueryPokemon();
 
   if (loading || pokemons.length == 0) return null;

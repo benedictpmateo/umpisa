@@ -1,9 +1,9 @@
-import LoginForm from "./_components/Signup";
+import SignupForm from "@/components/modules/Signup/Signup";
 
-export default function Home() {
+export default function Page() {
   return (
     <div className="w-full">
-      <LoginForm />
+      <SignupForm />
     </div>
   );
 }

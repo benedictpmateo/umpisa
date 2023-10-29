@@ -17,9 +17,8 @@ import { Input } from "@/components/ui/input";
 import graphqlClient from "@/lib/graphql";
 import { gql } from "graphql-request";
 import { useMutation } from "@tanstack/react-query";
-import { STORAGE_KEY } from "@/utils/constant";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   email: z.string().email().min(1, {
@@ -43,8 +42,9 @@ const formFields = [
   { label: "Last name", name: "lastName" },
 ];
 
-export default function LoginForm() {
+export default function SignupForm() {
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,9 +70,14 @@ export default function LoginForm() {
           body,
         }
       ),
-    onSuccess(data: any) {
-      localStorage.setItem(STORAGE_KEY.TOKEN, data?.createAccount?.token);
-      router.push("/");
+    onSuccess(data: any, variables) {
+      toast.success('Successfully created account: ' + variables.email)
+      router.push('/')
+    },
+    onError(error: any) {
+      if (error?.response?.errors) {
+        form.setError("email", { message: "User already exists" });
+      }
     },
   });
 
@@ -82,10 +87,7 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <h2 className="text-2xl font-bold">Create your account here</h2>
-      <p className="mb-10">
-        You will be automatically signed-in after you signup here.
-      </p>
+      <h2 className="mb-10 text-2xl font-bold">Create your account here</h2>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {formFields.map((item) => (
           <FormField
