@@ -4,7 +4,7 @@ import executor from "./mock/executor";
 
 describe("createAccount(body: CreateAccountRequest!): CreateAccountResponse!", () => {
   it("should create a user account", async () => {
-    const result: any = await executor({
+    const result: any = await executor()({
       document: parse(`
         mutation CreateUserAccount($body: CreateAccountRequest!) {
           createAccount(body: $body) {
@@ -27,11 +27,29 @@ describe("createAccount(body: CreateAccountRequest!): CreateAccountResponse!", (
     expect(result?.data).toHaveProperty('createAccount')
     expect(result?.data?.createAccount?.token).toBeTruthy()
   });
+
+
+  it("should be an error because this user account is already created", async () => {
+    const result: any = await executor()({
+      document: parse(`
+        mutation CreateUserAccount($body: CreateAccountRequest!) {
+          createAccount(body: $body) {
+            token
+          }
+        }
+    `),
+      variables: {
+        body: global.__UmpisaMockAccount,
+      }
+    });
+    expect(result.errors).not.toBeUndefined();
+    expect(result.errors[0].message).toBe('User already exists')
+  });
 });
 
 describe("loginUser(body: LoginAccountRequest!): LoginAccountResponse!", () => {
   it("should login user", async () => {
-    const result: any = await executor({
+    const result: any = await executor()({
       document: parse(`
         mutation LoginAccount($body: LoginAccountRequest!) {
           loginAccount(body: $body) {
@@ -41,8 +59,8 @@ describe("loginUser(body: LoginAccountRequest!): LoginAccountResponse!", () => {
       `),
       variables: {
         body: {
-          email: "benedict@mock.email",
-          password: "mockPassword",
+          email: global.__UmpisaMockAccount.email,
+          password: global.__UmpisaMockAccount.password,
         }
       }
     });

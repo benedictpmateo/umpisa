@@ -3,7 +3,7 @@ import { parse } from "graphql";
 import executor from './mock/executor';
 
 it("runs a health against our graphql schema", async () => {
-  const result: any = await executor({
+  const result: any = await executor()({
     document: parse(`
       query {
         health

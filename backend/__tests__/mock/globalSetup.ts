@@ -1,10 +1,13 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import assert from 'node:assert';
 import mongoose from 'mongoose';
+import { parse } from 'graphql';
 import config from './config';
+import executor from './executor';
+import { UserModel } from '../../src/database/models/user';
 
 export default async function globalSetup() {
-  if (config.Memory) { // Config to decided if an mongodb-memory-server instance should be used
-    // it's needed in global space, because we don't want to create a new instance every test-suite
+  if (config.Memory) {
     const instance = await MongoMemoryServer.create();
     const uri = instance.getUri();
     (global as any).__MONGOINSTANCE = instance;

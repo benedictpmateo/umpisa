@@ -6,8 +6,8 @@ const config: Config.InitialOptions = {
   rootDir: __dirname,
   modulePathIgnorePatterns: ["dist"],
   globalSetup: "<rootDir>/__tests__/mock/globalSetup.ts",
+  setupFilesAfterEnv: ["<rootDir>/__tests__/mock/setupFilesAfterEnv.ts"],
   globalTeardown: "<rootDir>/__tests__/mock/globalTeardown.ts",
-  setupFilesAfterEnv: ["<rootDir>/__tests__/mock/setupFile.ts"],
 };
 
 export default config;
