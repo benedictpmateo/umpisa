@@ -59,3 +59,10 @@ export interface CreateAccountRequest {
   firstName: string;
   lastName: string;
 }
+
+export interface UpdateAccountRequest {
+  userId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}

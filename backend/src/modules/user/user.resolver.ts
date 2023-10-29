@@ -4,6 +4,7 @@ import { UserModel } from "../../database/models/user";
 import type {
   CreateAccountRequest,
   LoginAccountRequest,
+  UpdateAccountRequest,
 } from "../../interface/base";
 import { GraphQLError } from "graphql";
 import { generateAccessToken } from "../../utils/jwt";
@@ -11,16 +12,39 @@ import type { Context } from "../../app";
 
 const UserResolver = {
   Query: {
-    user: async (_, __, { auth, user }) => {
+    user: async (_, __, { auth, user, models }) => {
       if (!auth) throw new GraphQLError("You are not authenticated");
-      const current = await UserModel.findOne({ _id: user._id }).populate({
-        path: "caughtPokemon",
-      }).exec();
+      const current = await models.UserModel.findOne({ _id: user._id })
+        .populate({
+          path: "caughtPokemon",
+        })
+        .exec();
       return current.toJSON();
+    },
+    rankings: async (_, __, { auth, user, models }: Context) => {
+      if (!auth) throw new GraphQLError("You are not authenticated");
+      const users = await models.UserModel.find()
+        .populate("caughtPokemon")
+        .exec();
+
+      return users
+        .map((user) => {
+          return {
+            userId: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            numberOfPokemons: user.caughtPokemon.length,
+          };
+        })
+        .sort((a, b) => b.numberOfPokemons - a.numberOfPokemons);
     },
   },
   Mutation: {
-    loginAccount: async (_, args: { body: LoginAccountRequest }, context: Context) => {
+    loginAccount: async (
+      _,
+      args: { body: LoginAccountRequest },
+      context: Context
+    ) => {
       const user = await context.models.UserModel.findOne({
         email: args.body.email.toLowerCase(),
       });
@@ -36,7 +60,11 @@ const UserResolver = {
         token,
       };
     },
-    createAccount: async (_, args: { body: CreateAccountRequest }, context: Context) => {
+    createAccount: async (
+      _,
+      args: { body: CreateAccountRequest },
+      context: Context
+    ) => {
       const isExist = await context.models.UserModel.findOne({
         email: args.body.email.toLowerCase(),
       });
@@ -59,6 +87,41 @@ const UserResolver = {
       const token = generateAccessToken({ _id: user._id, email: user.email });
       return {
         token,
+      };
+    },
+    updateAccount: async (
+      _,
+      args: { body: UpdateAccountRequest },
+      context: Context
+    ) => {
+      if (!context?.auth) throw new GraphQLError("You are not authenticated");
+      const isValidAccount = await context.models.UserModel.findOne({
+        _id: args.body.userId,
+      });
+      const isExist = await context.models.UserModel.findOne({
+        email: args.body.email.toLowerCase(),
+      });
+      if (!isValidAccount) {
+        throw new GraphQLError("Invalid user id");
+      }
+      if (isExist && isValidAccount && isValidAccount._id.toString() !== isExist._id.toString()) {
+        throw new GraphQLError("Email is already used");
+      }
+      await context.models.UserModel.updateOne(
+        {
+          _id: args.body.userId,
+        },
+        {
+          $set: {
+            email: args.body.email.toLowerCase(),
+            firstName: args.body.firstName,
+            lastName: args.body.lastName,
+          },
+        }
+      );
+
+      return {
+        status: true,
       };
     },
   },

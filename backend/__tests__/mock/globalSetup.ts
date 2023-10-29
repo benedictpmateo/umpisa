@@ -1,10 +1,6 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import assert from 'node:assert';
 import mongoose from 'mongoose';
-import { parse } from 'graphql';
 import config from './config';
-import executor from './executor';
-import { UserModel } from '../../src/database/models/user';
 
 export default async function globalSetup() {
   if (config.Memory) {
