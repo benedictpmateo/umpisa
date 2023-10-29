@@ -11,8 +11,10 @@ import {
 import { useQueryUser } from "@/hooks/useQueryUser";
 import { generateAnAvatar } from "@/lib/avatar";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function ProfileDropdown() {
+  const router = useRouter()
   const { data } = useSession();
   const { user } = useQueryUser();
 
@@ -28,8 +30,11 @@ export default function ProfileDropdown() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{user?.firstName} {user?.lastName}</DropdownMenuLabel>
+        <DropdownMenuLabel>{user?.firstName}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}>
+          Profile
+        </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
           Logout
         </DropdownMenuItem>
