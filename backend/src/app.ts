@@ -21,6 +21,9 @@ export interface Context {
 }
 
 export const graphQLServer = (_schema: any, _models: any) => createYoga({
+  cors: {
+    origin: '*'
+  },
   schema: _schema,
   logging: false,
   context: async ({ request }): Promise<Context> => {

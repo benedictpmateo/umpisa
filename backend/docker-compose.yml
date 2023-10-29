@@ -13,14 +13,14 @@ services:
     image: backend-service
     restart: always
     ports:
-      - 3000:3000
+      - 3001:3001
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
-      PORT: 3000
+      PORT: 3001
       DB_MONGO_DATABASE: umpisa
       DB_MONGO_USERNAME: root
       DB_MONGO_PASSWORD: password
