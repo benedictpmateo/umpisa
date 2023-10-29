@@ -13,9 +13,9 @@ Clone the repository to your local machine
 git clone https://github.com/benedictpmateo/umpisa.git
 ```
 
-There's two way to run the application:
-1. Docker setup
-2. Manual setup
+There are two ways to run the application:
+1. Docker setup (prod environment)
+2. Manual setup (dev environment)
 
 
 ### Docker Setup (prod environment)
@@ -30,11 +30,11 @@ There's two way to run the application:
 On your command line, go to the root folder of the project. Here you can see the `docker-compose.yml` file. Environment variables are inside the docker-compose file and feel free to edit them if needed.
 
 Here are the default ports:
-* Frontend - 3000
-* Backend - 3001
-* MongoDB - 27017
+* Frontend: 3000
+* Backend: 3001
+* MongoDB: 27017
 
-> Before you start, ensure no other applications are running in these ports.
+**Before you start, ensure no other applications are running in these ports.**
 
 To run, enter this to your terminal
 ```bash
@@ -54,8 +54,9 @@ After you build the project you can run the application here:
 
 **Instruction:**
 
-* Open two terminals, and open the backend and frontend folders then run `npm install` .
-* After installing the `node_modules`, copy `.env.example` to `.env` for both folder
+* Open two terminals, and open the backend and frontend folders then run `npm install`.
+* After installing the `node_modules`, copy `.env.example` to `.env` for both folders
+* Update the `.env` files if needed to change the configuration for MongoDB or PORTS
 * Then run `npm run dev` to run it locally.
 
 Then visit the application here:
@@ -68,7 +69,7 @@ For backend unit testing, open your terminal and go to `backend` folder.
 
 Make sure you already installed the application using the **Manual Setup**
 
-For unit testing, run this to your terminal:
+For unit testing, run this on your terminal:
 ```
 npm run test
 ```
